@@ -1,14 +1,10 @@
-const { traceDeprecation } = require('process');
 const { User } = require('../models');
 
 const userController = {
     // GET all users
     getAllUsers(req, res) {
         User.find({})
-            .populate({
-                path: 'thoughts',
-                select: '-__v'
-            })
+            .populate({ path: 'thoughts', select: '-__v' })
             .populate({
                 path: 'friends',
                 select: '-__v'
@@ -34,6 +30,7 @@ const userController = {
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
+                    return;
                 }
                 res.json(userData);
             });
@@ -42,7 +39,9 @@ const userController = {
     // POST a new user
     createUser({ body }, res) {
         User.create(body)
-            .then(userData => res.json(userData))
+            .then(userData => {
+                res.json(userData);
+            })
             .catch(err => res.status(400).json(err));
     },
 

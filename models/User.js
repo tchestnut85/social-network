@@ -16,16 +16,16 @@ const UserSchema = new Schema(
             trim: true
         },
         thoughts: [
-            // {
-            //     type: Schema.Types.ObjectId,
-            //     ref: 'Thought'
-            // }
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Thought'
+            }
         ],
         friends: [
-            // {
-            //     type: Schema.Types.ObjectId,
-            //     ref: 'User'
-            // }
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'User'
+            }
         ]
     },
     {
@@ -38,8 +38,12 @@ const UserSchema = new Schema(
 );
 
 // total count of friends a user has
+// UserSchema.virtual('friendCount').get(function () {
+//     return this.friends.reduce((total, friends) => total + friends.length + 1, 0);
+// });
+
 UserSchema.virtual('friendCount').get(function () {
-    return this.friends.reduce((total, friends) => total + friends.length + 1, 0);
+    return this.friends.length;
 });
 
 const User = model('User', UserSchema);
