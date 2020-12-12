@@ -45,6 +45,25 @@ const userController = {
             .catch(err => res.status(400).json(err));
     },
 
+    // POST to add a friend to a user's friendlist
+    // /api/users/:userId/friends/:friendId
+    addFriend(req, res) {
+        User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $push: { friends: req.params.friendId } },
+            { new: true, runValidators: true }
+        )
+            .select('-__v')
+            .then(userData => {
+                if (!userData) {
+                    res.status(404).json({ message: 'No user found with that ID.' });
+                    return;
+                }
+                res.json(userData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+
     // PUT - update a user
     updateUser({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
@@ -64,6 +83,25 @@ const userController = {
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
+                }
+                res.json(userData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+
+    // DELETE a friend from a user's friendlist
+    // /api/users/:userId/friends/:friendId
+    removeFriend(req, res) {
+        User.findOneAndUpdate(
+            { _id: req.params.userId },
+            { $pull: { friends: req.params.friendId } },
+            { new: true, runValidators: true }
+        )
+            .select('-__v')
+            .then(userData => {
+                if (!userData) {
+                    res.status(404).json({ message: 'No user found with that ID.' });
+                    return;
                 }
                 res.json(userData);
             })
