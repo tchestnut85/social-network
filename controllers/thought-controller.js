@@ -52,9 +52,29 @@ const thoughtController = {
             .catch(err => res.status(400).json(err));
     },
 
+    // POST to add a reaction
+    // /api/thoughts/:thoughtId/reactions
+    addReaction(req, res) {
+        Thought.findOneAndUpdate(
+            { _id: req.params.thoughtId },
+            { $push: { reactions: req.body } },
+            { new: true, runValidators: true }
+        )
+            .select('-__v')
+            .then(thoughtData => {
+                if (!thoughtData) {
+                    res.status(404).json({ message: 'No thought found with that ID.' });
+                    return;
+                }
+                res.json(thoughtData);
+            })
+            .catch(err => res.status(400).json(err));
+    },
+
     // PUT - update a Thought
     updateThought({ params, body }, res) {
         Thought.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+            .select('-__v')
             .then(thoughtData => {
                 if (!thoughtData) {
                     res.status(404).json({ message: 'No Thought found with that ID.' });
@@ -75,6 +95,12 @@ const thoughtController = {
                 res.json(thoughtData);
             })
             .catch(err => res.status(400).json(err));
+    },
+
+    // DELETE to remove a reaction
+    // /api/thoughts/:thoughtId/reactions
+    removeReaction(req, res) {
+
     }
 };
 
