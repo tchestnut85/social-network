@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dayjs = require('dayjs');
 
 const UserSchema = new Schema(
     {
@@ -27,7 +28,12 @@ const UserSchema = new Schema(
                 type: Schema.Types.ObjectId,
                 ref: 'User'
             }
-        ]
+        ],
+        createdAt: {
+            type: Date,
+            default: Date.now,
+            get: createdAtVal => dayjs(createdAtVal).format('MMM DD, YYYY h:mm a')
+        }
     },
     {
         toJSON: {
