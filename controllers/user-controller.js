@@ -4,10 +4,10 @@ const userController = {
     // GET all users
     getAllUsers(req, res) {
         User.find({})
-            .populate({ path: 'thoughts', select: '-__v' })
-            .populate({ path: 'friends', select: '-__v' })
+            // .populate({ path: 'thoughts', select: '-__v' })
+            // .populate({ path: 'friends', select: '-__v' })
             .select('-__v')
-            .sort({ field: 'desc' })
+            .sort({ createdAt: 'desc' })
             .then(userData => res.json(userData))
             .catch(err => {
                 console.log(err);
@@ -18,10 +18,10 @@ const userController = {
     // GET one user by ID
     getOneUser({ params }, res) {
         User.findOne({ _id: params.id })
-            .populate({ path: 'thoughts', select: '-__v' })
-            .populate({ path: 'friends', select: '-__v' })
+            // .populate({ path: 'thoughts', select: '-__v' })
+            // .populate({ path: 'friends', select: '-__v' })
             .select('-__v')
-            .sort({ field: 'desc' })
+            .sort({ createdAt: 'desc' })
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
@@ -42,10 +42,10 @@ const userController = {
 
     // POST to add a friend to a user's friendlist
     // /api/users/:userId/friends/:friendId
-    addFriend(req, res) {
+    addFriend({ params }, res) {
         User.findOneAndUpdate(
-            { _id: req.params.userId },
-            { $push: { friends: req.params.friendId } },
+            { _id: params.userId },
+            { $push: { friends: params.friendId } },
             { new: true, runValidators: true }
         )
             .select('-__v')
@@ -54,7 +54,7 @@ const userController = {
                     res.status(404).json({ message: 'No user found with that ID.' });
                     return;
                 }
-                res.json(userData);
+                res.json({ message: 'The user was added to your friend list.', userData });
             })
             .catch(err => res.status(400).json(err));
     },
@@ -62,12 +62,13 @@ const userController = {
     // PUT - update a user
     updateUser({ params, body }, res) {
         User.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true })
+            .select('-__v')
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
                     return;
                 }
-                res.json(userData);
+                res.json({ message: 'The user was updated.', userData });
             })
             .catch(err => res.status(400).json(err));
     },
@@ -75,21 +76,22 @@ const userController = {
     // DELETE a user
     deleteUser({ params }, res) {
         User.findOneAndDelete({ _id: params.id })
+            .select('-__v')
             .then(userData => {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
                 }
-                res.json(userData);
+                res.json({ message: 'The user was deleted.', userData });
             })
             .catch(err => res.status(400).json(err));
     },
 
     // DELETE a friend from a user's friendlist
     // /api/users/:userId/friends/:friendId
-    removeFriend(req, res) {
+    removeFriend({ params }, res) {
         User.findOneAndUpdate(
-            { _id: req.params.userId },
-            { $pull: { friends: req.params.friendId } },
+            { _id: params.userId },
+            { $pull: { friends: params.friendId } },
             { new: true, runValidators: true }
         )
             .select('-__v')
@@ -98,7 +100,7 @@ const userController = {
                     res.status(404).json({ message: 'No user found with that ID.' });
                     return;
                 }
-                res.json(userData);
+                res.json({ message: "That user was removed from your friend list.", userData });
             })
             .catch(err => res.status(400).json(err));
     }
