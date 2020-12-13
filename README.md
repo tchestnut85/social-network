@@ -3,7 +3,7 @@
 ![License](https://img.shields.io/badge/License%3A-MIT-green.svg)
 
 ## Description
-This is a RESTful API back-end for a social network application using MongoDB as the NoSQL database along with Mongoose as the ODM. Node.js is used with Express.js for the server and Day.js is used for formatting date and time. There is currently no front-end functionality for this app so routes are demonstrated below using InsomniaCore.
+This is a RESTful API back-end for a social network application using MongoDB as the NoSQL database along with Mongoose as the ODM. Node.js is used with Express.js for the server and Day.js is used for formatting date and time. There is currently no front-end functionality for this app so routes are demonstrated with screenshots below and a demo video in the [Links](#links) section using InsomniaCore.
 
 Users can post a thought, add a reaction to another user's thought, and add another user to their friend list. 
 Users can also update their info, remove friends from their friend list, update or delete thoughts they posted and remove reactions from other user's thoughts. Users can also be deleted.
