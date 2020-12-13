@@ -79,14 +79,11 @@ const userController = {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
                 }
-                // return Thought.remove(
                 return Thought.deleteMany(
                     { username: userData.username },
                     { new: true, runValidators: true }
                 )
                     .then(thoughtData => {
-                        console.log('thoughtData:', thoughtData);
-                        console.log('userData:', userData);
                         res.json({ message: `The user ${userData.username} was deleted.`, userData, thoughtData });
                     });
             })

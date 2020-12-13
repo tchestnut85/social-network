@@ -90,7 +90,6 @@ const thoughtController = {
         Thought.findOneAndDelete({ _id: req.params.id })
             .select('-__v')
             .then(thoughtData => {
-                console.log('thoughtData:', thoughtData);
                 if (!thoughtData) {
                     res.status(404).json({ message: 'No Thought found with that ID.' });
                     return;
