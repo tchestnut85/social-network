@@ -4,10 +4,6 @@ const thoughtController = {
     // GET all thoughts
     getAllThoughts(req, res) {
         Thought.find({})
-            // .populate({
-            //     path: 'reactions',
-            //     select: '-__v',
-            // })
             .select('-__v')
             .sort({ createdAt: 'desc' })
             .then(thoughtData => res.json(thoughtData))
@@ -110,20 +106,6 @@ const thoughtController = {
             })
             .catch(err => res.status(400).json(err));
     },
-
-    // // DELETE a Thought
-    // deleteThought({ params }, res) {
-    //     Thought.findOneAndDelete({ _id: params.id })
-    //         .select('-__v')
-    //         .then(thoughtData => {
-    //             if (!thoughtData) {
-    //                 res.status(404).json({ message: 'No Thought found with that ID.' });
-    //                 return;
-    //             }
-    //             res.json({ message: 'Your thought was deleted.', thoughtData });
-    //         })
-    //         .catch(err => res.status(400).json(err));
-    // },
 
     // DELETE to remove one reaction from a thought
     // /api/thoughts/:thoughtId/reactions/:reactionId

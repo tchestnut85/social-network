@@ -1,11 +1,9 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
     // GET all users
     getAllUsers(req, res) {
         User.find({})
-            // .populate({ path: 'thoughts', select: '-__v' })
-            // .populate({ path: 'friends', select: '-__v' })
             .select('-__v')
             .sort({ createdAt: 'desc' })
             .then(userData => res.json(userData))
@@ -18,8 +16,8 @@ const userController = {
     // GET one user by ID
     getOneUser({ params }, res) {
         User.findOne({ _id: params.id })
-            // .populate({ path: 'thoughts', select: '-__v' })
-            // .populate({ path: 'friends', select: '-__v' })
+            .populate({ path: 'thoughts', select: '-__v' })
+            .populate({ path: 'friends', select: '-__v' })
             .select('-__v')
             .sort({ createdAt: 'desc' })
             .then(userData => {
@@ -54,7 +52,7 @@ const userController = {
                     res.status(404).json({ message: 'No user found with that ID.' });
                     return;
                 }
-                res.json({ message: 'The user was added to your friend list.', userData });
+                res.json({ message: `The user was added to your friend list.`, userData });
             })
             .catch(err => res.status(400).json(err));
     },
@@ -73,7 +71,7 @@ const userController = {
             .catch(err => res.status(400).json(err));
     },
 
-    // DELETE a user
+    // DELETE a user and the user's associated thoughts
     deleteUser({ params }, res) {
         User.findOneAndDelete({ _id: params.id })
             .select('-__v')
@@ -81,7 +79,16 @@ const userController = {
                 if (!userData) {
                     res.status(404).json({ message: 'No user found with that ID.' });
                 }
-                res.json({ message: 'The user was deleted.', userData });
+                // return Thought.remove(
+                return Thought.deleteMany(
+                    { username: userData.username },
+                    { new: true, runValidators: true }
+                )
+                    .then(thoughtData => {
+                        console.log('thoughtData:', thoughtData);
+                        console.log('userData:', userData);
+                        res.json({ message: `The user ${userData.username} was deleted.`, userData, thoughtData });
+                    });
             })
             .catch(err => res.status(400).json(err));
     },
